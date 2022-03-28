@@ -23,6 +23,8 @@ window.exports = {
             },
             search: (action, searchWord, callbackSetList) => {
                 console.log("##2")
+                const folder = path.resolve(__dirname);
+                console.log("folder="+folder)
                 getClipboardData(callbackSetList);
                 // var clipboardData = clip.readText()
                 // console.log("##2-" + clipboardData)
@@ -67,29 +69,21 @@ function getClipboardData(callbackSetList) {
     // 图片类型
     else if (!clip.readImage().isEmpty()) {
         var clipboardData = clip.readImage();
-
         console.log("图片类型：" + clipboardData.constructor);
         const buffer = clipboardData.toPNG();
         console.log("buffer:" + buffer.constructor);
         var imgData = new Buffer(clipboardData.toPNG(), 'base64'); //Buffer编码
         const fileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-        var imgPath = dir + fileName+".png"
+        var imgPath = dir + fileName + ".png"
         console.log("imgPath:" + imgPath);
-
-        fs.writeFile(imgPath, imgData);
-
-        saveClipboardImage(clipboardData).then((path) => {
-            // // 更新列表
-            // addToImageList(uploadList, {
-            //     img,
-            //     path
-            // });
-            // removeFromClipboardList(img);
-            console.log("图片保存成功：" + path);
-            window.utools.hideMainWindow()
-        }).catch((e) => {
-            console.log("图片上传失败")
-            console.log(e);
+        fs.writeFile(imgPath, imgData, function (err) {
+            if (err) {
+                console.log("图片上传失败")
+                console.log(err);
+            } else {
+                console.log("图片保存成功：" + imgPath);
+                // window.utools.hideMainWindow()
+            }
         });
     }
 
